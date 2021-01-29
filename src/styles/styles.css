@@ -1,0 +1,351 @@
+/**
+ * Copyright (c) 2021 Oracle and/or its affiliates.
+ * Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
+ */
+
+/**
+ * Styles for the whole application.
+ * 
+ * The client side React application has the styles with each component.
+ * However for the React SSR application all the styles are in this one single file
+ * which is copied into the "public" folder on build.
+ */
+
+body {
+  font-family: -apple-system, "Lucida Sans Unicode", "Lucida Grande", sans-serif;
+  margin: 0;
+  max-width: 1700px;   
+}
+
+h1 {
+  font-size: 40px; 
+  font-weight: normal;
+}
+
+.error {
+  color: gray;
+  font-size: 1.5em;
+  text-align: center;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+/**
+ * Styles for text titles and sub text, used in the following components : 
+ *   "ConnectWithUs", 
+ *   "Locations"
+ *   "Welcome" 
+ */
+
+ .content {
+  color: #403C38; 
+  padding-left: 6vw;
+  padding-right: 6vw;
+
+  padding-top: 1vw;
+  padding-bottom: 3vw; 
+}
+.text {
+  font-size: 14px;
+  margin-top: 2.7vw;  
+}
+
+@media screen and (max-width: 1023px) {
+  .content {
+    padding-bottom: 6.3vw; 
+  }    
+  .content h1 {
+    margin-top: 2vw;
+  }
+  .text {        
+    margin-top: 8vw;
+  }
+}
+
+
+/* adjust the padding bottom for the contact us text
+   to make it smaller */
+   .connect-with-us {
+    padding-bottom: 1.8vw; 
+  }
+  
+  @media screen and (max-width: 1023px) {
+    .connect-with-us {
+      padding-bottom: 1.3vw; 
+    }    
+    .connect-with-us .text {
+      margin-top: 0vw;
+    }
+  }
+
+  
+/**
+ *  Styles for the Footer component.
+ */
+
+/* Style specific to the footer */
+footer {
+  background-color: #333333;
+  display: flex; 
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-left: 6vw;
+  padding-right: 6vw;
+  padding-top: 0.9vw;
+  padding-bottom: 1vw;
+}
+
+/* Styles for the social media bar and buttons */
+.social-media-menu {
+  margin-top:1vw;
+}
+.social-media-menu img {
+  width: 24px; 
+  height: 24px; 
+  margin: 0px 5px 0px 0px;
+}
+
+/* Style for the footer on a small screen
+   Social bar is on a row below the icon */
+@media screen and (max-width: 767px) {
+  footer {
+    flex-direction: column;
+  }
+  
+  /* Styles for the social media bar and buttons */
+  .social-media-menu {
+    margin-top:2.8vw;        
+    align-self: flex-end;
+  }
+}
+
+
+
+/**
+ *  Styles for the Header component.
+ */
+
+/* Style specific to the header */
+header {
+  background-color: #333333;
+  display: flex; /* default direction is row, which is what we want */    
+  justify-content: space-between;
+  align-items: flex-start;
+  padding-left: 6vw;
+  padding-right: 6vw;
+  padding-top: 1.2vw;
+  padding-bottom: 1.8vw;
+}
+
+
+/* Style for the nav menu and its items*/
+
+/* Full width screen the nav button is not visible, its 
+   only displayed on narrow screens */
+nav button {
+  display: none;    
+}
+
+/* Nav menu items are a horizontal list (flex=row) with no bullets visible */
+nav ul {
+  list-style-type: none; 
+  display:flex;    
+  flex-flow: row wrap; /* flex-direction flex-wrap */
+}
+nav li {
+  color: white;
+  padding-left: 16px; 
+  padding-right: 16px; 
+  font-size: 18px;
+  color: #797979;
+  font-weight: bold;
+}
+nav li a {
+  color:#797979;
+}
+nav li a:hover {
+  color:#e1fa00;
+}
+nav li a.active {
+  color: #C0D600;
+}
+nav li a.active:hover {
+  color: #e1fa00;
+}   
+
+
+/* Styles for the header on a small screen
+   Nav menu changes to a button with a drop down menu */
+@media screen and (max-width: 1023px) {
+  /* Make the header a little higher on narrow screens */
+  header {        
+    padding-bottom: 4.6vw;
+  }
+
+  /* Define the appearance of the nav button which 
+    is visible on narrower screens */ 
+  nav button {
+    display: inline-block;
+    background-color: #333333;
+    border-style: none;
+    outline: none;    
+    font-size: 26px;
+    padding: 8px 16px;
+    font-weight: bolder;
+    cursor: pointer;
+    color: #797979;    
+  }    
+  nav button:hover {
+    color: #e1fa00;
+  }
+  nav button.active {
+    color: #C0D600;
+  }
+  nav button.active:hover {
+    color: #e1fa00;
+  } 
+
+  /* On Narrow screens the nav menu is a vertical list rather than a 
+      horizontal list, it is displayed in a bordered box displayed just 
+      below the nav button. It has its "right" setting set, so it lines 
+      up as desired with the nav button and its z-order set high so it 
+      sits on top of everything */
+  nav ul {
+    display:none;
+    position: fixed;
+    background-color: #333333;	
+    right: 6vw;
+    list-style-type: none;
+    margin: 0;
+    z-index: 99; 
+    border-width: 2px;
+    border-style: solid;
+    border-color: #797979;         
+    flex-flow: column wrap; 
+    justify-content: flex-start;    
+    padding-left: 0;
+  }
+  /* Style added to the nav items when the nav button is clicked
+      to make the menu display, this style is removed to make
+      the menu hide. */
+  nav ul.displayed {
+    display: block;
+  }
+  /* Adjust the nav menu items appearance when in the drop down menu */
+  nav li {
+    min-width: 200px;
+    padding : 14px 0px; 
+  }
+  nav li a {
+    padding: 14px 16px;
+  }
+}
+
+
+
+/**
+ * Style for an Image with 2 text items (an optionally a button) 
+ * displayed ontop.
+ */
+
+
+/* Style for the image with text overlaid */
+.content-image {    
+  /* sets whether a background image scrolls with the rest of the page, or is fixed. */
+  background-attachment: scroll;
+  /* sets the starting position of a background image.*/
+  background-position: center;
+  /* sets if/how a background image will be repeated. */
+  background-repeat: no-repeat;  
+  /* specifies the size of the background images. 
+     cover : cover the entire container, even if it has to stretch /cut off part of the image*/
+  background-size: cover;	 
+  
+  display:flex;    
+  flex-direction: row;
+  justify-content: flex-end;
+  color: #ffffff; 
+}
+
+.content-image > div {
+  width: 57%;
+}
+.content-image > div > div {
+  margin-left: 6vw;
+  margin-right: 6vw; 
+  margin-top: 6vw;
+  margin-bottom: 6vw;
+}
+.content-image > div > div.adjust-margins {
+  margin-bottom: 3vw;
+}
+.content-image .title {
+  font-size: 40px;
+}
+.content-image .text {
+  font-size: 24px;    
+  margin-top: 2.6vw;
+  margin-bottom: 7vw;
+}
+.content-image .text.adjust-margins {
+  margin-bottom: 1.5vw;    
+}
+.content-image .button {
+  background-color: #c0d600;
+  color: #58595b;
+  border-style: none;
+  padding: 11px 10px;
+  font-size: 24px;
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  display: inline-block;
+}
+.content-image a {
+  text-decoration: none;
+}
+
+/* 
+ * Overwrite the settings in each style for narrow screens
+ */ 
+@media screen and (max-width: 1023px) {
+  .content-image {            
+    justify-content: flex-start;        
+  }
+  .content-image > div {
+    width: 100%;
+  }
+  .content-image > div > div {
+    margin-right: 8vw; 
+  }
+  .content-image .title {
+    margin-top: 0vw;
+    margin-bottom: 6vw;
+  }
+  .content-image .text {
+    margin-bottom: 9vw;
+  }
+  .content-image .text.adjust-margins {
+    margin-bottom: 2.5vw;
+  }
+}
+
+
+
+/**
+ *  Styles for the Location component.
+ */
+ 
+ .locations {
+  background-color: #696969;
+  color: white;
+}
+
+@media screen and (max-width: 1023px) {
+  .locations {
+    padding-bottom: 3vw; 
+  }
+  .locations .text {
+    margin-top: 0vw;
+  }
+} 
+
