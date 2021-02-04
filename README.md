@@ -6,8 +6,9 @@ Please see the [complete tutorial](https://www.oracle.com/pls/topic/lookup?ctx=c
 
 ## Running the project
 > **NOTE:** If you need to use a proxy to reach the internet then define an oce_https_proxy environment variable:
-> export oce_https_proxy=\<scheme\>://\<proxyhost\>:\<port\>
-
+```shell
+export oce_https_proxy=<scheme>://<proxyhost>:<port>
+```
 
 Install dependencies by running: 
 ```shell
@@ -37,7 +38,7 @@ and then open [http://localhost:8080](http://localhost:8080)
 
 
 ## Images
-Sample images may be downloaded from [https://www.oracle.com/middleware/technologies/content-experience-downloads.html](https://www.oracle.com/middleware/technologies/content-experience-downloads.html) under a separate license.  These images are provided for reference purposes only and may not be hosted or redistributed by you.
+Sample images may be [downloaded](https://www.oracle.com/middleware/technologies/content-experience-downloads.html) under a separate license.  These images are provided for reference purposes only and may not be hosted or redistributed by you.
 
 
 ## How to Contribute
