@@ -1,11 +1,7 @@
 # Minimal Site - React
 This repository holds the sample source code for a ReactJS implementation of a simple site that uses digital assets managed in Oracle Content and Experience.
 
-Please see the complete tutorial at:
-[https://www.oracle.com/pls/topic/lookup?ctx=cloud&id=oce-react-minimal-sample](https://www.oracle.com/pls/topic/lookup?ctx=cloud&id=oce-react-minimal-sample)
-
-A live version of this project is available at:
-[https://headless.mycontentdemo.com/samples/oce-react-minimal-sample](https://headless.mycontentdemo.com/samples/oce-react-minimal-sample)
+Please see the [complete tutorial](https://www.oracle.com/pls/topic/lookup?ctx=cloud&id=oce-react-minimal-sample) and [live demo](https://headless.mycontentdemo.com/samples/oce-react-minimal-sample).
 
 
 ## Running the project
@@ -14,26 +10,34 @@ A live version of this project is available at:
 
 
 Install dependencies by running: 
-> npm install
+```shell
+npm install
+```
 
 ### Development
 During development the dev script should be used: 
-> npm run dev
+```shell
+npm run dev
+```
 
 This script builds the client and server bundles and starts the application in a local server. Webpack will watch for code changes and recreate the client and server bundles as required.
 
 ### Production
 For production the build script should be used to build the client and server bundles. Run it using: 
-> npm run build
+```shell
+npm run build
+```
 
 When the script completes the application can be started using: 
-> npm run start
+```shell
+npm run start
+```
 
 and then open [http://localhost:8080](http://localhost:8080)
 
 
 ## Images
-Sample images may be downloaded from [https://www.oracle.com/middleware/technologies/content-experience-downloads.html](https://www.oracle.com/middleware/technologies/content-experience-downloads.html) under a separate license.  These images are provided for reference purposes only and may not hosted or redistributed by you.
+Sample images may be downloaded from [https://www.oracle.com/middleware/technologies/content-experience-downloads.html](https://www.oracle.com/middleware/technologies/content-experience-downloads.html) under a separate license.  These images are provided for reference purposes only and may not be hosted or redistributed by you.
 
 
 ## How to Contribute
