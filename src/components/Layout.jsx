@@ -28,8 +28,8 @@ const Layout = (props) => {
 
 Layout.propTypes = {
   children: PropTypes.element.isRequired,
-  headerLogoURL: PropTypes.string.isRequired,
-  footerLogoURL: PropTypes.string.isRequired,
+  headerLogoURL: PropTypes.shape().isRequired,
+  footerLogoURL: PropTypes.shape().isRequired,
 };
 
 export default Layout;

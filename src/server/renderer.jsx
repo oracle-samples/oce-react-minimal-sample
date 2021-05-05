@@ -37,7 +37,8 @@ export default (req, context) => {
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-      
+        <meta name="description" content="Sample Minimal app created in Svelte that utilizes the content sdk library">
+
         <title>OCE Minimal - React</title>
         <link rel="icon" href="favicon.png" type="image/png">
 

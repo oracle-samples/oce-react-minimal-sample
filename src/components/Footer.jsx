@@ -23,8 +23,19 @@ const Footer = (props) => {
   return (
     <footer id="footer">
       {/* Logo */}
-      <img id="footer-image" src={logoUrl} alt="Footer Logo" />
-
+      {logoUrl
+        && (
+          <picture>
+            <source type="image/webp" srcSet={logoUrl.srcset} sizes="300px" />
+            <img
+              id="footer-image"
+              src={logoUrl.native}
+              alt="Footer Logo"
+              width={logoUrl.width}
+              height={logoUrl.height}
+            />
+          </picture>
+        )}
       {/* Social Media Icons */}
       {/* Note: the resolved img src will be the following
               publicPath + name_of_image_in_public_folder
@@ -53,7 +64,7 @@ const Footer = (props) => {
 };
 
 Footer.propTypes = {
-  logoUrl: PropTypes.string.isRequired,
+  logoUrl: PropTypes.shape().isRequired,
 };
 
 export default Footer;

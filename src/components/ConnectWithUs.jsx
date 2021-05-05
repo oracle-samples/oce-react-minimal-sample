@@ -24,12 +24,12 @@ const ConnectWithUs = () => (
         </a>
       </p>
       <p>
-        Check out all our samples&nbsp;
+        Check out all our&nbsp;
         <a
           className="connect-with-us-link"
           href="https://www.oracle.com/middleware/technologies/content-experience-downloads.html"
         >
-          <strong>here</strong>
+          <strong>samples</strong>
         </a>
       </p>
     </div>

@@ -25,17 +25,24 @@ const ImageWithText = (props) => {
 
   // determined styles
   const textClassNames = buttonText ? 'text adjust-margins' : 'text';
-  const imageBackgroundStyle = {
-    backgroundImage: `url(${backgroundImage})`,
-  };
 
   return (
-    <section
-      id="image-with-text-container"
-      className="content-image"
-      style={imageBackgroundStyle}
-    >
+    <section id="image-with-text-container" className="content-image">
       <div>
+        {backgroundImage
+          && (
+            <picture>
+              <source type="image/webp" srcSet={backgroundImage.srcset} />
+              <source srcSet={backgroundImage.jpgSrcset} />
+              <img
+                id="header-image"
+                src={backgroundImage.large}
+                alt="Company Logo"
+                width={backgroundImage.width}
+                height={backgroundImage.height}
+              />
+            </picture>
+          )}
         <div className="adjust-margins">
           <p id="image-with-text-title" className="title">
             {mainTitle}
@@ -61,15 +68,12 @@ ImageWithText.propTypes = {
   subText: PropTypes.string.isRequired,
   buttonText: PropTypes.string,
   buttonUrl: PropTypes.string,
-  backgroundImage: PropTypes.oneOfType(
-    [PropTypes.string, PropTypes.arrayOf(PropTypes.string)],
-  ),
+  backgroundImage: PropTypes.shape().isRequired,
 };
 
 ImageWithText.defaultProps = {
   buttonUrl: '',
   buttonText: '',
-  backgroundImage: '',
 };
 
 export default ImageWithText;

@@ -1,4 +1,4 @@
-# Minimal Site - React
+# About React Minimal Site Sample
 
 This repository holds the sample source code for a ReactJS implementation of a simple site that uses digital assets managed in Oracle Content and Experience.
 
@@ -42,17 +42,25 @@ When the script completes the application can be started using:
 npm run start
 ```
 
-and then open <http://localhost:8080>
+and then open [http://localhost:8080](http://localhost:8080)
 
 ## Images
 
-Sample images may be [downloaded](https://www.oracle.com/middleware/technologies/content-experience-downloads.html) under a separate license.  These images are provided for reference purposes only and may not be hosted or redistributed by you.
+Sample images may be downloaded from [https://www.oracle.com/middleware/technologies/content-experience-downloads.html](https://www.oracle.com/middleware/technologies/content-experience-downloads.html) under a separate license.  These images are provided for reference purposes only and may not be hosted or redistributed by you.
 
-## How to Contribute
+## Contributing
 
-This is an open source project. See [CONTRIBUTING](https://github.com/oracle/oce-react-minimal-sample/blob/main/CONTRIBUTING.md) for details.
+This project welcomes contributions from the community. Before submitting a pull
+request, please [review our contribution guide](./CONTRIBUTING.md).
+
+## Security
+
+Please consult the [security guide](./SECURITY.md) for our responsible security
+vulnerability disclosure process.
 
 ## License
 
-Copyright (c) 2021 Oracle and/or its affiliates and released under the
-[Universal Permissive License (UPL)](https://oss.oracle.com/licenses/upl/), Version 1.0
+Copyright (c) 2021 Oracle and/or its affiliates.
+
+Released under the Universal Permissive License v1.0 as shown at
+<https://oss.oracle.com/licenses/upl/>.

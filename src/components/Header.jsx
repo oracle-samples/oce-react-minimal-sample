@@ -76,10 +76,21 @@ class Header extends React.Component {
     return (
       <header id="header">
         {/* Header Logo */}
-        <Link to={{ pathname: '/' }} style={{ textDecoration: 'none' }}>
-          <img id="header-image" src={logoUrl} alt="Company Logo" />
-        </Link>
-
+        {logoUrl
+          && (
+            <Link to={{ pathname: '/' }} style={{ textDecoration: 'none' }}>
+              <picture>
+                <source type="image/webp" srcSet={logoUrl.srcset} />
+                <img
+                  id="header-image"
+                  src={logoUrl.native}
+                  alt="Company Logo"
+                  width={logoUrl.width}
+                  height={logoUrl.height}
+                />
+              </picture>
+            </Link>
+          )}
         {/* Menu : Home | Contact Us */}
         <nav>
           <button
@@ -122,7 +133,7 @@ class Header extends React.Component {
 }
 
 Header.propTypes = {
-  logoUrl: PropTypes.string.isRequired,
+  logoUrl: PropTypes.shape().isRequired,
   location: PropTypes.shape({
     pathname: PropTypes.string,
   }).isRequired,
