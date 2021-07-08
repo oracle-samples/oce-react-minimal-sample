@@ -4,9 +4,15 @@
  */
 /* eslint-disable no-param-reassign */
 
-import getDeliveryClient from './server-config-utils';
+/**
+ * This file contains a number of utility methods used to obtain data
+ * from the server using the Oracle Content SDK JavaScript Library.
+ */
 
-/*
+import getClient from './server-config-utils';
+import getImageUrl from './utils';
+
+/**
  * Utility method to log an error.
  */
 function logError(message, error) {
@@ -19,6 +25,13 @@ function logError(message, error) {
   } else if (error) {
     console.error(message, error);
   }
+  return {
+    hasError: true,
+    statusCode: error.statusCode,
+    statusMessage: error.statusMessage,
+    errno: error.errno,
+    code: error.code,
+  };
 }
 
 /**
@@ -32,7 +45,7 @@ function addRendition(urls, rendition, formatstr) {
   // Get the webp format field
   const format = rendition.formats.filter((item) => item.format === `${formatstr}`)[0];
   const self = format.links.filter((item) => item.rel === 'self')[0];
-  const url = self.href;
+  const url = getImageUrl(self.href);
   const { width } = format.metadata;
 
   // Also save the jpg format so that it can be used as a default value for images
@@ -70,41 +83,62 @@ function getSourceSet(asset) {
 }
 
 /**
- * Fetch the URLs for the specified named images.
+ * Fetch the specified item given its slug
  *
- * The data returned is a map of image name to image url.
- *
- * @param {DeliveryClient} client - the delivery client
- * @param {array} imageNames - Array of item names to get from the server
+ * @param {string} slug - the item slug whose details are to be obtained
+ * @param {string} expand - the fields that need to be expanded
  * @returns {Promise({Object})} - A Promise containing the data
  */
-export default function fetchImageURLs(imageNames) {
-  const client = getDeliveryClient();
-  // Build up the query predicate of the format :
-  // 'name eq "name1" OR name eq "name2" OR name eq "name3"'
-  let predicate = '';
-  for (let i = 0; i < imageNames.length; i += 1) {
-    if (i > 0) {
-      predicate += ' OR ';
-    }
-    predicate += `name eq "${imageNames[i]}"`;
-  }
-  const queryString = `((${predicate}) AND type eq "Image")`;
+async function getItem(slug, expand) {
+  const client = getClient();
+  return client.getItem({
+    slug,
+    expand,
+    language: 'en',
+  }).then((asset) => asset)
+    .catch((error) => logError('Fetching Item failed', error));
+}
 
-  // Search for the items and get the Rendition URL for each item
-  return client
-    .queryItems({
-      q: queryString,
-      fields: 'all',
-    })
-    .then((result) => {
-      const imageURLs = {};
-      const { items } = result;
-      for (let i = 0; i < items.length; i += 1) {
-        const urls = getSourceSet(items[i]);
-        imageURLs[items[i].name] = urls;
-      }
-      return imageURLs;
-    })
-    .catch((error) => logError('Fetching images failed', error));
+/**
+ * Fetch the item with the slug of minimalmain
+ *
+ * @returns {Promise({Object})} - A Promise containing the data
+ */
+export async function fetchOceMinimalMain() {
+  const data = await getItem('minimalmain', 'fields.headerlogo,fields.footerlogo,fields.pages');
+  if (!data.hasError) {
+    const { fields } = data;
+    const { headerlogo, footerlogo } = fields;
+    // Extract the sourceset for the headerImage and footerImage and put it back in the data
+    data.headerRenditionURLs = getSourceSet(headerlogo);
+    data.footerRenditionURLs = getSourceSet(footerlogo);
+  }
+  return data;
+}
+
+/**
+ * Fetch the specified page content type given its slug
+ *
+ * @param {string} slug - the page slug whose details are to be obtained
+ * @returns {Promise({Object})} - A Promise containing the data
+ */
+export async function fetchPage(pageslug) {
+  // Get the page details
+  const page = await getItem(pageslug, 'fields.sections');
+  return page;
+}
+
+/**
+ * Return the rendition URLs for the specified item.
+ *
+ * @param {string} identifier - the item id whose rendition URLs are to be obtained
+ * @returns {Promise({Object})} - A Promise containing the data
+ */
+export function getRenditionURLs(identifier) {
+  const client = getClient();
+  return client.getItem({
+    id: identifier,
+    expand: 'fields.renditions',
+  }).then((asset) => getSourceSet(asset))
+    .catch((error) => logError('Fetching Rendition URLs failed', error));
 }

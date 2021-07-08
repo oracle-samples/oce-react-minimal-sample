@@ -1,7 +1,7 @@
 {
   "name": "oce-react-minimal-sample",
-  "version": "21.5.1",
-  "description": "A simple site built using React and loading content from Oracle Content and Experience.",
+  "version": "21.7.1",
+  "description": "A simple site built using React and loading content from Oracle Content Management.",
   "author": "Oracle America, Inc.",
   "license": "UPL-1.0",
   "keywords": [
@@ -30,19 +30,22 @@
     "lint": "eslint ./src --ext .js,.jsx"
   },
   "dependencies": {
-    "contentsdk": "https://samples.mycontentdemo.com/_sitesclouddelivery/renderer/app/sdk/npm/contentsdk-1.1.0.tgz",
+    "@oracle/content-management-sdk": "~1.2.0",
     "core-js": "~3.6.5",
     "dotenv": "~8.2.0",
     "express": "~4.17.1",
     "https-proxy-agent": "~5.0.0",
+    "node-fetch": "^2.6.1",
     "prop-types": "~15.7.2",
     "react": "~17.0.1",
     "react-dom": "~17.0.1",
+    "react-router": "^5.2.0",
     "react-router-config": "~5.1.1",
     "react-router-dom": "~5.2.0",
     "react-router-prop-types": "~1.0.5",
     "regenerator-runtime": "~0.13.7",
-    "serialize-javascript": "~5.0.1"
+    "serialize-javascript": "~5.0.1",
+    "xss": "^1.0.8"
   },
   "devDependencies": {
     "@babel/cli": "~7.12.1",

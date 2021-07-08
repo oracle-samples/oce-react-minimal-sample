@@ -7,28 +7,17 @@
  * Contains the Routes used in the Client and Server routers.
  */
 import App from './App';
-import HomePage from './HomePage';
-import ContactUsPage from './ContactUsPage';
-import NotFoundPage from './NotFoundPage';
+import Page from './Page';
 
 export default [
   {
     ...App,
     routes: [
       {
-        ...HomePage,
-        path: '/',
-        exact: true,
-        title: 'Home',
-      },
-      {
-        ...ContactUsPage,
-        path: '/contact',
-        exact: true,
-        title: 'contact',
-      },
-      {
-        ...NotFoundPage,
+        ...Page,
+        path: '/:slug',
+        exact: false,
+        title: 'Page',
       },
     ],
   },

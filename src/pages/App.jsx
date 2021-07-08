@@ -6,9 +6,12 @@
 import React from 'react';
 import { renderRoutes } from 'react-router-config';
 import PropTypes from 'prop-types';
+import { Redirect } from 'react-router';
 
-import Layout from '../components/Layout';
-import fetchImageURLs from '../scripts/services';
+import { fetchOceMinimalMain } from '../scripts/services';
+import Header from '../components/Header';
+import Footer from '../components/Footer';
+import Error from '../components/Error';
 
 /**
  * The main application component which wraps each page of the application
@@ -21,50 +24,40 @@ class App extends React.Component {
     let data;
     if (process.env.IS_BROWSER) {
       data = window.INITIAL_DATA;
-      // Do not delete the data yet, as the HomePage/ContactUs page need to read from it
-      // delete window.INITIAL_DATA;
+      // Do not delete the data yet, as the Page component needs to read from it
     } else {
       const { staticContext } = this.props;
       data = staticContext.data;
     }
 
-    // The data will be an array containing one object with the URLs from the
-    // this component and another object with the URLs from HomePage/ContactUsPage component.
-    // Flatted into a single object to make it easier to pull out the data we need.
-    const mergedData = data ? Object.assign(...data) : {};
-
     this.state = {
-      headerLogoURL: mergedData ? mergedData[process.env.LOGO_FILE_NAME] : '',
-      footerLogoURL: mergedData ? mergedData[process.env.FOOTER_LOGO_FILE_NAME] : '',
+      appData: data,
     };
   }
 
-  // client side only : if this component doesn't already have its data, load it
-  componentDidMount() {
-    const { headerLogoURL, footerLogoURL } = this.state;
-    if (!headerLogoURL || !footerLogoURL) {
-      this.fetchData();
-    }
-  }
-
-  // Client Side Data Fetching: called from Client when doing client side routing/hydration
-  fetchData() {
-    fetchImageURLs([process.env.LOGO_FILE_NAME, process.env.FOOTER_LOGO_FILE_NAME])
-      .then((data) => this.setState(() => ({
-        headerLogoURL: data[process.env.LOGO_FILE_NAME],
-        footerLogoURL: data[process.env.FOOTER_LOGO_FILE_NAME],
-      })));
-  }
-
   render() {
-    const { headerLogoURL, footerLogoURL } = this.state;
-    const { route } = this.props;
-
+    const { appData } = this.state;
+    const [data] = appData; // appData is an array. Fetch the first item in the array
+    if (data.hasError) {
+      return (
+        <Error errorObj={data} />
+      );
+    }
+    const { route, location } = this.props;
+    const { footerRenditionURLs, fields } = data;
+    const { pathname } = location;
+    const isRoot = pathname === '/';
+    const [firstPage] = fields.pages;
+    const firstPageSlug = firstPage.slug;
     return (
       <div>
-        <Layout headerLogoURL={headerLogoURL} footerLogoURL={footerLogoURL}>
-          {renderRoutes(route.routes)}
-        </Layout>
+        <Header pages={data.fields.pages} headerRenditionURLs={data.headerRenditionURLs} />
+        {isRoot ? (
+          <Redirect to={{ pathname: `/${firstPageSlug}` }} />
+        ) : (
+          renderRoutes(route.routes)
+        )}
+        <Footer footerRenditionURLs={footerRenditionURLs} />
       </div>
     );
   }
@@ -72,11 +65,11 @@ class App extends React.Component {
 
 // Server Side Data Fetching: called from Express server when sending HTML to client
 function fetchInitialData() {
-  return fetchImageURLs([process.env.LOGO_FILE_NAME, process.env.FOOTER_LOGO_FILE_NAME]);
+  return fetchOceMinimalMain();
 }
 
 /*
- * Export an object with name value pairs of loadData function and component.
+ * Export an object with name value pairs of fetchInitialData function and component.
  */
 export default {
   fetchInitialData,
@@ -90,6 +83,7 @@ App.propTypes = {
   route: PropTypes.shape({
     routes: PropTypes.arrayOf(PropTypes.shape()),
   }).isRequired,
+  location: PropTypes.shape().isRequired,
 };
 
 App.defaultProps = {

@@ -21,6 +21,9 @@ export default (req, context) => {
       <div>{renderRoutes(Routes)}</div>
     </StaticRouter>,
   );
+  const stylesFile = `${process.env.BASE_URL}/styles.css`;
+  const favIconFile = `${process.env.BASE_URL}/favicon.png`;
+  const clientBundleFile = `${process.env.BASE_URL}/client-bundle.js`;
 
   // Generate the final HTML content as a full HTML document
   // The body contains:
@@ -37,12 +40,11 @@ export default (req, context) => {
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Sample Minimal app created in Svelte that utilizes the content sdk library">
+        <meta name="description" content="Sample Minimal app created in React that utilizes the content sdk library">
 
         <title>OCE Minimal - React</title>
-        <link rel="icon" href="favicon.png" type="image/png">
-
-        <link rel="stylesheet" href="styles.css" type="text/css">
+        <link rel="icon" href="${favIconFile}" type="image/png">
+        <link rel="stylesheet" href="${stylesFile}" type="text/css">
       </head>
 
       <body>
@@ -50,7 +52,7 @@ export default (req, context) => {
         <script>
           window.INITIAL_DATA = ${serialize(context.data)}
         </script>
-        <script src="client-bundle.js"></script>
+        <script src="${clientBundleFile}"></script>
       </body>
 
     </html>

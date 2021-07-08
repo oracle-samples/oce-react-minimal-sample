@@ -10,29 +10,17 @@ import { Link, withRouter } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 /**
- * Header component.
- *
- * @param logoUrl the URL for the image to be displayed in the header
- * @param location the URL which the user should be navigated to when
- *                 they click on the header image
- */
+* Header component.
+*
+* @param headerRenditionURLs rendition urls for the header logo
+* @param pages the pages data
+* @param location the location object made available via withRouter
+*/
 class Header extends React.Component {
   constructor(props) {
     super(props);
-
-    this.state = {
-      currentNavIndex: 0,
-    };
-  }
-
-  /**
-   * Determine which Menu Item should be highlighted.
-   * This is only called on the CLIENT
-   */
-  componentDidMount() {
-    const { location } = this.props;
-    const index = (location.pathname === '/contact') ? 1 : 0;
-    this.setState({ currentNavIndex: index });
+    // from the location determine which page if any is selected
+    this.setSelectedPageIndex();
   }
 
   /*
@@ -53,12 +41,11 @@ class Header extends React.Component {
   }
 
   /*
-   * Handle an item being clicked on from the menu
-   */
+  * Handle an item being clicked on from the menu
+  */
   onMenuItemClicked(index) {
     // set the current nav index
-    this.setState({ currentNavIndex: index });
-
+    this.setState({ selectedPageIndex: index });
     // Close the menu and update the button styling
     const dropDownMenu = document.getElementById('nav-menu-items');
     const menuButton = document.getElementById('nav-menu-button');
@@ -66,32 +53,54 @@ class Header extends React.Component {
     menuButton.className = '';
   }
 
+  setSelectedPageIndex() {
+    const { location, pages } = this.props;
+    const { pathname } = location;
+    const pageslug = pathname.split('/').pop();
+    let selectedPageIndex = 0;
+    selectedPageIndex = pages.findIndex((page) => page.slug === pageslug);
+    this.state = {
+      selectedPageIndex,
+    };
+  }
+
   /*
-   * Render this component
-   */
+  * Render this component
+  */
   render() {
-    const { logoUrl } = this.props;
-    const { currentNavIndex } = this.state;
+    const { headerRenditionURLs, pages } = this.props;
+    const { selectedPageIndex } = this.state;
+    const pageItems = pages.map((page, index) => (
+      <li key={page.slug}>
+        <Link
+          id={page.slug}
+          className={selectedPageIndex === index ? 'active' : ''}
+          onClick={() => this.onMenuItemClicked(index)}
+          to={{ pathname: `/${page.slug}` }}
+          style={{ textDecoration: 'none' }}
+        >
+          {page.name}
+        </Link>
+      </li>
+    ));
 
     return (
       <header id="header">
         {/* Header Logo */}
-        {logoUrl
+        {headerRenditionURLs
           && (
-            <Link to={{ pathname: '/' }} style={{ textDecoration: 'none' }}>
-              <picture>
-                <source type="image/webp" srcSet={logoUrl.srcset} />
-                <img
-                  id="header-image"
-                  src={logoUrl.native}
-                  alt="Company Logo"
-                  width={logoUrl.width}
-                  height={logoUrl.height}
-                />
-              </picture>
-            </Link>
+            <picture>
+              <source type="image/webp" srcSet={headerRenditionURLs.srcset} />
+              <img
+                id="header-image"
+                src={headerRenditionURLs.native}
+                alt="Company Logo"
+                width={headerRenditionURLs.width}
+                height={headerRenditionURLs.height}
+              />
+            </picture>
           )}
-        {/* Menu : Home | Contact Us */}
+        {/* Collapsed menu */}
         <nav>
           <button
             id="nav-menu-button"
@@ -102,28 +111,7 @@ class Header extends React.Component {
           </button>
 
           <ul id="nav-menu-items">
-            <li>
-              <Link
-                id="header-link-home"
-                className={currentNavIndex === 0 ? 'active' : ''}
-                onClick={() => this.onMenuItemClicked(0)}
-                to={{ pathname: '/' }}
-                style={{ textDecoration: 'none' }}
-              >
-                Home
-              </Link>
-            </li>
-            <li>
-              <Link
-                id="header-link-contactus"
-                className={currentNavIndex === 1 ? 'active' : ''}
-                onClick={() => this.onMenuItemClicked(1)}
-                to={{ pathname: '/contact' }}
-                style={{ textDecoration: 'none' }}
-              >
-                Contact Us
-              </Link>
-            </li>
+            {pageItems}
           </ul>
         </nav>
 
@@ -133,10 +121,9 @@ class Header extends React.Component {
 }
 
 Header.propTypes = {
-  logoUrl: PropTypes.shape().isRequired,
-  location: PropTypes.shape({
-    pathname: PropTypes.string,
-  }).isRequired,
+  pages: PropTypes.arrayOf(PropTypes.shape()).isRequired,
+  headerRenditionURLs: PropTypes.shape().isRequired,
+  location: PropTypes.shape().isRequired,
 };
 
 export default withRouter(Header);
