@@ -42,7 +42,7 @@ export default (req, context) => {
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="description" content="Sample Minimal app created in React that utilizes the content sdk library">
 
-        <title>OCE Minimal - React</title>
+        <title>Minimal - React</title>
         <link rel="icon" href="${favIconFile}" type="image/png">
         <link rel="stylesheet" href="${stylesFile}" type="text/css">
       </head>

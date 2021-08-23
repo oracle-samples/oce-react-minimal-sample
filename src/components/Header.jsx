@@ -76,7 +76,7 @@ class Header extends React.Component {
           id={page.slug}
           className={selectedPageIndex === index ? 'active' : ''}
           onClick={() => this.onMenuItemClicked(index)}
-          to={{ pathname: `/${page.slug}` }}
+          to={{ pathname: `/page/${page.slug}` }}
           style={{ textDecoration: 'none' }}
         >
           {page.name}

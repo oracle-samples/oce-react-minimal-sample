@@ -32,7 +32,7 @@ module.exports = {
   output: {
     // publicPath : allows you to specify the base path for all the assets within your app
     // must end in a trailing slash, https://webpack.js.org/guides/public-path/
-    publicPath: (BASE_URL) ? `${BASE_URL}/` : '',
+    publicPath: (BASE_URL) ? `${BASE_URL}/` : '/',
   },
   optimization: {
     minimize: false,

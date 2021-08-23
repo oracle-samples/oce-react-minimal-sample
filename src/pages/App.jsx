@@ -53,7 +53,7 @@ class App extends React.Component {
       <div>
         <Header pages={data.fields.pages} headerRenditionURLs={data.headerRenditionURLs} />
         {isRoot ? (
-          <Redirect to={{ pathname: `/${firstPageSlug}` }} />
+          <Redirect to={{ pathname: `/page/${firstPageSlug}` }} />
         ) : (
           renderRoutes(route.routes)
         )}

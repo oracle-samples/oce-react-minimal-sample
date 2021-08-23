@@ -96,7 +96,7 @@ async function getItem(slug, expand) {
     expand,
     language: 'en',
   }).then((asset) => asset)
-    .catch((error) => logError('Fetching Item failed', error));
+    .catch((error) => logError(`Fetching Item failed for slug ${slug}`, error));
 }
 
 /**

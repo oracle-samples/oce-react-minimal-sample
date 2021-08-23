@@ -15,8 +15,8 @@ export default [
     routes: [
       {
         ...Page,
-        path: '/:slug',
-        exact: false,
+        path: '/page/:slug',
+        exact: true,
         title: 'Page',
       },
     ],
