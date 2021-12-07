@@ -105,7 +105,7 @@ async function getItem(slug, expand) {
  * @returns {Promise({Object})} - A Promise containing the data
  */
 export async function fetchOceMinimalMain() {
-  const data = await getItem('minimalmain', 'fields.headerlogo,fields.footerlogo,fields.pages');
+  const data = await getItem('minimalmaingraphql', 'fields.headerlogo,fields.footerlogo,fields.pages');
   if (!data.hasError) {
     const { fields } = data;
     const { headerlogo, footerlogo } = fields;

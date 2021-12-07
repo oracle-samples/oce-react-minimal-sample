@@ -43,6 +43,25 @@ const config = {
       'process.env.IS_BROWSER': true,
     }),
   ],
+
+  externals: {
+    'node:buffer': '{}',
+    'node:fs': '{}',
+    'node:http': '{}',
+    'node:https': '{}',
+    'node:path': '{}',
+    'node:process': '{}',
+    'node:stream': '{}',
+    'node:stream/web': '{}',
+    'node:url': '{}',
+    'node:util': '{}',
+    'node:worker_threads': '{}',
+    'node:zlib': '{}',
+  },
+  resolve: {
+    fallback: {
+    },
+  },
 };
 
 // merge the base config and this config together to produce the full client config

@@ -14,7 +14,7 @@ import { getRenditionURLs } from '../scripts/services';
  * @param section the section to be displayed
  */
 const Section = ({ section }) => {
-  const [renditionURLs, setRenditionURLs] = useState(null);
+  const [renditionURLs, setRenditionURLs] = useState(section.renditionURLs);
   const options = {
     stripIgnoreTag: true, // filter out all HTML not in the whitelist
     stripIgnoreTagBody: ['script'], // the script tag is a special case, we need
@@ -57,7 +57,7 @@ const Section = ({ section }) => {
             />
           </picture>
         )}
-        <div>
+        <div className="textcontent">
           <h1>{heading}</h1>
           <div className="text">
             {/* eslint-disable-next-line react/no-danger */}

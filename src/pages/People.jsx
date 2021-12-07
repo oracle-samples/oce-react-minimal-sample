@@ -5,14 +5,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import { fetchPage } from '../scripts/services';
+import fetchPeople from '../scripts/services-graphql';
 import Section from '../components/Section';
+import Person from '../components/Person';
 import Error from '../components/Error';
 
 /**
-* Component for Page.
+* Component for People.
 */
-class Page extends React.Component {
+class People extends React.Component {
   constructor(props) {
     super(props);
     let data;
@@ -56,7 +57,7 @@ class Page extends React.Component {
 
   // Client Side Data Fetching: called from Client when doing client side routing/hydration
   async fetchData(slug) {
-    const pageData = await fetchPage(slug);
+    const pageData = await fetchPeople(slug);
     document.title = pageData.name;
     this.setState(() => ({
       pageData,
@@ -74,20 +75,27 @@ class Page extends React.Component {
         <Error errorObj={pageData} />
       );
     }
-    const { sections } = pageData.fields;
+    const { people, announcement } = pageData.fields;
 
     return (
-      <div key={pageData.id}>
-        {sections && (
-        <div id="sections">
-          {sections.map(
-            (section) => (
-              <Section section={section} key={section.id} />
-            ),
-          )}
+      <>
+        <Section section={announcement} key={announcement.id} />
+        {people && (
+        <div className="all_people">
+            {people.map(
+              (person) => (
+                <Person
+                  renditionURLs={person.renditionURLs}
+                  name={person.fields.fullname}
+                  position={person.fields.title}
+                  description={person.fields.biodata}
+                  key={person.id}
+                />
+              ),
+            )}
         </div>
         )}
-      </div>
+      </>
     );
   }
 }
@@ -95,7 +103,7 @@ class Page extends React.Component {
 // Server Side Data Fetching: called from Express server when sending HTML to client
 function fetchInitialData(req) {
   const pageslug = req.path.split('/').pop();
-  return fetchPage(pageslug);
+  return fetchPeople(pageslug);
 }
 
 /*
@@ -103,16 +111,16 @@ function fetchInitialData(req) {
 */
 export default {
   fetchInitialData,
-  component: Page,
+  component: People,
 };
 
-Page.propTypes = {
+People.propTypes = {
   staticContext: PropTypes.shape({
     data: PropTypes.arrayOf(PropTypes.shape()),
   }),
   location: PropTypes.shape().isRequired,
 };
 
-Page.defaultProps = {
+People.defaultProps = {
   staticContext: {},
 };

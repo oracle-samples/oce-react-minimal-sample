@@ -8,11 +8,19 @@
  */
 import App from './App';
 import Page from './Page';
+import People from './People';
 
 export default [
   {
     ...App,
+    path: '/',
     routes: [
+      {
+        ...People,
+        path: '/page/people',
+        exact: true,
+        title: 'People',
+      },
       {
         ...Page,
         path: '/page/:slug',

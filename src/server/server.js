@@ -140,7 +140,7 @@ server.get('*', (req, res) => {
 /*
  * Set the port the Express server is listening on
  */
-const port = process.env.EXPRESS_SERVER_PORT || 8080;
+const port = process.env.PORT || 8080;
 server.listen(port, () => {
   console.log(`Application is accesssible on : http://localhost:${port}`);
 });

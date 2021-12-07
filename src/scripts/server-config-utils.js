@@ -143,13 +143,13 @@ export async function getAuthValue() {
 function beforeSendCallback(param) {
   return new Promise((resolve, reject) => {
     try {
-      return getAuthValue().then((authValue) => {
+      getAuthValue().then((authValue) => {
         param.headers = param.headers || {};
         param.headers.authorization = authValue;
         return resolve(true);
       });
     } catch (e) {
-      return reject(new Error('Error getting auth value'));
+      reject(new Error('Error getting auth value'));
     }
   });
 }

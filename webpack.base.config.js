@@ -67,7 +67,6 @@ module.exports = {
       'process.env.BASE_URL': JSON.stringify(BASE_URL),
       'process.env.PREVIEW': JSON.stringify(process.env.PREVIEW),
       'process.env.AUTH': JSON.stringify(process.env.AUTH),
-      'process.env.EXPRESS_SERVER_PORT': JSON.stringify(process.env.EXPRESS_SERVER_PORT),
       'process.env.SERVER_URL': JSON.stringify(process.env.SERVER_URL),
       'process.env.API_VERSION': JSON.stringify(process.env.API_VERSION),
       'process.env.CHANNEL_TOKEN': JSON.stringify(process.env.CHANNEL_TOKEN),

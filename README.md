@@ -6,8 +6,11 @@ Please see the [complete tutorial](https://www.oracle.com/pls/topic/lookup?ctx=c
 
 ## Running the project
 
-> **NOTE:** If you need to use a proxy to reach the internet then define an oce_https_proxy environment variable:
-> export oce_https_proxy=\<scheme\>://\<proxyhost\>:\<port\>
+> **NOTE:** If you need to use a proxy to reach the internet then define an `oce_https_proxy` environment variable:
+
+```shell
+export oce_https_proxy=<scheme>://<proxyhost>:<port>
+```
 
 Install dependencies by running:
 

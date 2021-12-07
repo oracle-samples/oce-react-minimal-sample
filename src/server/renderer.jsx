@@ -54,7 +54,6 @@ export default (req, context) => {
         </script>
         <script src="${clientBundleFile}"></script>
       </body>
-
     </html>
   `;
 };
