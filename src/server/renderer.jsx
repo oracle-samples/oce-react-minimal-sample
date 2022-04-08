@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Oracle and/or its affiliates.
+ * Copyright (c) 2021, 2022, Oracle and/or its affiliates.
  * Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
  */
 
@@ -7,6 +7,7 @@
  * Handles the generation of the server generated HTML.
  */
 import React from 'react';
+import { Helmet } from 'react-helmet';
 import { renderToString } from 'react-dom/server';
 import { StaticRouter } from 'react-router-dom';
 import { renderRoutes } from 'react-router-config';
@@ -21,6 +22,8 @@ export default (req, context) => {
       <div>{renderRoutes(Routes)}</div>
     </StaticRouter>,
   );
+  const helmet = Helmet.renderStatic();
+
   const stylesFile = `${process.env.BASE_URL}/styles.css`;
   const favIconFile = `${process.env.BASE_URL}/favicon.png`;
   const clientBundleFile = `${process.env.BASE_URL}/client-bundle.js`;
@@ -45,6 +48,7 @@ export default (req, context) => {
         <title>Minimal - React</title>
         <link rel="icon" href="${favIconFile}" type="image/png">
         <link rel="stylesheet" href="${stylesFile}" type="text/css">
+        ${helmet.meta.toString()}
       </head>
 
       <body>

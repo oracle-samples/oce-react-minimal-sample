@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2021 Oracle and/or its affiliates.
+ * Copyright (c) 2021, 2022, Oracle and/or its affiliates.
  * Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
  */
 
@@ -7,7 +7,7 @@ import React from 'react';
 import { renderRoutes } from 'react-router-config';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router';
-
+import { Helmet } from 'react-helmet';
 import { fetchOceMinimalMain } from '../scripts/services';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -51,6 +51,10 @@ class App extends React.Component {
     const firstPageSlug = firstPage.slug;
     return (
       <div>
+        <Helmet>
+          <meta name="BUILD_TAG" content={`${process.env.BUILD_TAG}`} />
+          <meta name="@oracle/gatsby-source-oce" content={`${process.env.SDK_VERSION}`} />
+        </Helmet>
         <Header pages={data.fields.pages} headerRenditionURLs={data.headerRenditionURLs} />
         {isRoot ? (
           <Redirect to={{ pathname: `/page/${firstPageSlug}` }} />

@@ -16,7 +16,6 @@ import {
   InMemoryCache,
   gql,
 } from '@apollo/client';
-import getImageUrl from './utils';
 
 /**
  * Constants used in this file
@@ -102,7 +101,7 @@ const GET_PEOPLE_PAGE = gql`
 function addRenditionGraphQL(urls, rendition) {
   // Get the webp format field
   const { format } = rendition;
-  const url = getImageUrl(rendition.file.url);
+  const { url } = rendition.file;
   const { width } = rendition.file.metadata;
 
   // Also save the jpg format so that it can be used as a default value for images
