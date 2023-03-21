@@ -3,10 +3,10 @@
  * Licensed under the Universal Permissive License v 1.0 as shown at https://oss.oracle.com/licenses/upl.
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 // When you wrap withRouter around a component it will give
 // you read access to your history and location objects within this.props
-import { Link, withRouter } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
 /**
@@ -16,18 +16,23 @@ import PropTypes from 'prop-types';
 * @param pages the pages data
 * @param location the location object made available via withRouter
 */
-class Header extends React.Component {
-  constructor(props) {
-    super(props);
-    // from the location determine which page if any is selected
-    this.setSelectedPageIndex();
-  }
+export default function Header({ headerRenditionURLs, pages }) {
+  const location = useLocation();
+  const [selectedPageIndex, setSelectedPageIndex] = useState(0);
+
+  // function to get query params using URLSearchParams
+  useEffect(() => {
+    const { pathname } = location;
+    const pageslug = pathname.split('/').pop();
+    const index = pages.findIndex((page) => page.slug === pageslug);
+    setSelectedPageIndex(index > -1 ? index : 0);
+  }, [location]);
 
   /*
    * Show/hide the drop down menu in narrow screens when the
    * button is clicked and update the button styling.
    */
-  static onDropDownMenuButtonClicked() {
+  function onDropDownMenuButtonClicked() {
     const dropDownMenu = document.getElementById('nav-menu-items');
     const menuButton = document.getElementById('nav-menu-button');
 
@@ -43,9 +48,9 @@ class Header extends React.Component {
   /*
   * Handle an item being clicked on from the menu
   */
-  onMenuItemClicked(index) {
+  function onMenuItemClicked(index) {
     // set the current nav index
-    this.setState({ selectedPageIndex: index });
+    setSelectedPageIndex(index);
     // Close the menu and update the button styling
     const dropDownMenu = document.getElementById('nav-menu-items');
     const menuButton = document.getElementById('nav-menu-button');
@@ -53,77 +58,56 @@ class Header extends React.Component {
     menuButton.className = '';
   }
 
-  setSelectedPageIndex() {
-    const { location, pages } = this.props;
-    const { pathname } = location;
-    const pageslug = pathname.split('/').pop();
-    let selectedPageIndex = 0;
-    selectedPageIndex = pages.findIndex((page) => page.slug === pageslug);
-    this.state = {
-      selectedPageIndex,
-    };
-  }
+  const pageItems = pages.map((page, index) => (
+    <li key={page.slug}>
+      <Link
+        id={page.slug}
+        className={selectedPageIndex === index ? 'active' : ''}
+        onClick={() => onMenuItemClicked(index)}
+        to={{ pathname: `/page/${page.slug}` }}
+        style={{ textDecoration: 'none' }}
+      >
+        {page.name}
+      </Link>
+    </li>
+  ));
 
-  /*
-  * Render this component
-  */
-  render() {
-    const { headerRenditionURLs, pages } = this.props;
-    const { selectedPageIndex } = this.state;
-    const pageItems = pages.map((page, index) => (
-      <li key={page.slug}>
-        <Link
-          id={page.slug}
-          className={selectedPageIndex === index ? 'active' : ''}
-          onClick={() => this.onMenuItemClicked(index)}
-          to={{ pathname: `/page/${page.slug}` }}
-          style={{ textDecoration: 'none' }}
+  return (
+    <header id="header">
+      {/* Header Logo */}
+      {headerRenditionURLs
+        && (
+          <picture>
+            <source type="image/webp" srcSet={headerRenditionURLs.srcset} />
+            <img
+              id="header-image"
+              src={headerRenditionURLs.native}
+              alt="Company Logo"
+              width={headerRenditionURLs.width}
+              height={headerRenditionURLs.height}
+            />
+          </picture>
+        )}
+      {/* Collapsed menu */}
+      <nav>
+        <button
+          id="nav-menu-button"
+          onClick={onDropDownMenuButtonClicked}
+          type="button"
         >
-          {page.name}
-        </Link>
-      </li>
-    ));
+          ☰
+        </button>
 
-    return (
-      <header id="header">
-        {/* Header Logo */}
-        {headerRenditionURLs
-          && (
-            <picture>
-              <source type="image/webp" srcSet={headerRenditionURLs.srcset} />
-              <img
-                id="header-image"
-                src={headerRenditionURLs.native}
-                alt="Company Logo"
-                width={headerRenditionURLs.width}
-                height={headerRenditionURLs.height}
-              />
-            </picture>
-          )}
-        {/* Collapsed menu */}
-        <nav>
-          <button
-            id="nav-menu-button"
-            onClick={Header.onDropDownMenuButtonClicked}
-            type="button"
-          >
-            ☰
-          </button>
+        <ul id="nav-menu-items">
+          {pageItems}
+        </ul>
+      </nav>
 
-          <ul id="nav-menu-items">
-            {pageItems}
-          </ul>
-        </nav>
-
-      </header>
-    );
-  }
+    </header>
+  );
 }
 
 Header.propTypes = {
   pages: PropTypes.arrayOf(PropTypes.shape()).isRequired,
   headerRenditionURLs: PropTypes.shape().isRequired,
-  location: PropTypes.shape().isRequired,
 };
-
-export default withRouter(Header);

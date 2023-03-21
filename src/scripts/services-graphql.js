@@ -8,19 +8,26 @@
  * This file contains a number of utility methods used to obtain data
  * from the server using the Oracle Content SDK JavaScript Library.
  */
-
 import fetch from 'cross-fetch';
+import createHttpsProxyAgent from 'https-proxy-agent';
 import {
   ApolloClient,
-  HttpLink,
   InMemoryCache,
   gql,
+  HttpLink,
 } from '@apollo/client';
+import getClient from './server-config-utils';
+
+import getImageUrl from './utils';
+
+const isPreview = process.env.CONTENT_MODE === 'preview';
+let serverUrlGraphQL = isPreview
+  ? '/content/preview/api/v1.1/graphql'
+  : `${process.env.SERVER_URL}/content/published/api/v1.1/graphql`;
 
 /**
  * Constants used in this file
  */
-const SERVER_URL_GRAPHQL = `${process.env.SERVER_URL}/content/published/api/v1.1/graphql`;
 const GET_PEOPLE_PAGE = gql`
   query ($peopleSlug: String!, $channelToken: String!){
     getPeoplePage(slug: $peopleSlug, channelToken: $channelToken) {
@@ -101,7 +108,8 @@ const GET_PEOPLE_PAGE = gql`
 function addRenditionGraphQL(urls, rendition) {
   // Get the webp format field
   const { format } = rendition;
-  const { url } = rendition.file;
+  let { url } = rendition.file;
+  url = isPreview ? getImageUrl(url) : url;
   const { width } = rendition.file.metadata;
 
   // Also save the jpg format so that it can be used as a default value for images
@@ -143,12 +151,32 @@ function getSourceSetGraphQL(asset) {
  * @param {string} slug - the page slug whose details are to be obtained
  * @returns {Promise({Object})} - A Promise containing the data
  */
-export default async function fetchPeople(peopleSlug) {
+export default async function fetchPeople(peopleSlug, hostUrl) {
   // Get the page details
+  // Apollo needs an absolute URL during SSR. The req is used to build the hosturl in that case.
+  if (hostUrl != null && isPreview) {
+    serverUrlGraphQL = `${hostUrl}/content/preview/api/v1.1/graphql`;
+  }
+  let customFetch = fetch;
+  // Figure out if we need a proxy. Only needed on server-side render
+  if (typeof window === 'undefined' && typeof process === 'object') {
+    const authValue = await getClient().getAuthorizationHeaderValue();
+    customFetch = (uri, options) => {
+      options.headers.Authorization = authValue;
+      const proxyServer = process.env.SERVER_URL.startsWith('https')
+        ? process.env.oce_https_proxy : process.env.oce_http_proxy;
+      if (proxyServer) {
+        const proxy = createHttpsProxyAgent(proxyServer);
+        options.agent = proxy;
+      }
+      return fetch(uri, options);
+    };
+  }
+  const httpLink = new HttpLink({ uri: serverUrlGraphQL, fetch: customFetch });
   const channelToken = `${process.env.CHANNEL_TOKEN}`;
   const client = new ApolloClient(
     {
-      link: new HttpLink({ uri: SERVER_URL_GRAPHQL, fetch }),
+      link: httpLink,
       cache: new InMemoryCache(),
     },
   );

@@ -4,92 +4,57 @@
  */
 
 import React from 'react';
-import { renderRoutes } from 'react-router-config';
+import { Route, Routes } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import { Redirect } from 'react-router';
 import { Helmet } from 'react-helmet';
-import { fetchOceMinimalMain } from '../scripts/services';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
-import Error from '../components/Error';
+// eslint-disable-next-line import/no-cycle
+import routes from './Routes';
 
 /**
  * The main application component which wraps each page of the application
  * with a header and footer.
  */
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-
-    let data;
-    if (process.env.IS_BROWSER) {
-      data = window.INITIAL_DATA;
-      // Do not delete the data yet, as the Page component needs to read from it
-    } else {
-      const { staticContext } = this.props;
-      data = staticContext.data;
-    }
-
-    this.state = {
-      appData: data,
-    };
+export default function App({ serverData = null }) {
+  let appData;
+  if (process.env.IS_BROWSER) {
+    appData = window.INITIAL_DATA;
+  } else {
+    // serverData gets passed in only when its SSR. The data passed is an array, the first element
+    // of which contains the data to render the header and hooter and pages.
+    appData = serverData;
   }
-
-  render() {
-    const { appData } = this.state;
-    const [data] = appData; // appData is an array. Fetch the first item in the array
-    if (data.hasError) {
-      return (
-        <Error errorObj={data} />
-      );
-    }
-    const { route, location } = this.props;
-    const { footerRenditionURLs, fields } = data;
-    const { pathname } = location;
-    const isRoot = pathname === '/';
-    const [firstPage] = fields.pages;
-    const firstPageSlug = firstPage.slug;
-    return (
-      <div>
-        <Helmet>
-          <meta name="BUILD_TAG" content={`${process.env.BUILD_TAG}`} />
-          <meta name="@oracle/gatsby-source-oce" content={`${process.env.SDK_VERSION}`} />
-        </Helmet>
-        <Header pages={data.fields.pages} headerRenditionURLs={data.headerRenditionURLs} />
-        {isRoot ? (
-          <Redirect to={{ pathname: `/page/${firstPageSlug}` }} />
-        ) : (
-          renderRoutes(route.routes)
-        )}
-        <Footer footerRenditionURLs={footerRenditionURLs} />
-      </div>
-    );
-  }
+  const [data] = appData;
+  if (!data) return null;
+  const { footerRenditionURLs } = data;
+  return (
+    <div>
+      <Helmet>
+        <meta name="BUILD_TAG" content={`${process.env.BUILD_TAG}`} />
+        <meta name="@oracle/content-management-sdk" content={`${process.env.SDK_VERSION}`} />
+      </Helmet>
+      <Header pages={data.fields.pages} headerRenditionURLs={data.headerRenditionURLs} />
+      <Routes>
+        {routes.map(({
+          path, fetchInitialData, component: C, title,
+        }) => (
+          <Route
+            key={path}
+            path={path}
+            // eslint-disable-next-line max-len
+            element={<C serverData={serverData} fetchInitialData={fetchInitialData} title={title} />}
+          />
+        ))}
+      </Routes>
+      <Footer footerRenditionURLs={footerRenditionURLs} />
+    </div>
+  );
 }
-
-// Server Side Data Fetching: called from Express server when sending HTML to client
-function fetchInitialData() {
-  return fetchOceMinimalMain();
-}
-
-/*
- * Export an object with name value pairs of fetchInitialData function and component.
- */
-export default {
-  fetchInitialData,
-  component: App,
-};
 
 App.propTypes = {
-  staticContext: PropTypes.shape({
-    data: PropTypes.arrayOf(PropTypes.shape()),
-  }),
-  route: PropTypes.shape({
-    routes: PropTypes.arrayOf(PropTypes.shape()),
-  }).isRequired,
-  location: PropTypes.shape().isRequired,
+  serverData: PropTypes.arrayOf(PropTypes.shape()),
 };
-
 App.defaultProps = {
-  staticContext: {},
+  serverData: [],
 };

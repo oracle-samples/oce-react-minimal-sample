@@ -13,11 +13,15 @@
 import 'core-js'; // replacement for babel-polyfill in babel 7.4 & above
 import 'regenerator-runtime/runtime'; // replacement for babel-polyfill in babel 7.4 & above
 import express from 'express';
-import { matchRoutes } from 'react-router-config';
 import http from 'http';
 import https from 'https';
-import Routes from '../pages/Routes';
+import { matchPath } from 'react-router';
+import routes from '../pages/Routes';
 import renderer from './renderer';
+import getClient from '../scripts/server-config-utils';
+import { fetchOceMinimalMain } from '../scripts/services';
+
+const bodyParser = require('body-parser');
 
 /*
  * Create an instance of an Express server
@@ -31,15 +35,15 @@ const server = express();
  */
 server.use(express.static('public'));
 
+// The bodyParser is needed since we need to get the req body for graphql queries
+// server.use(cors());
+server.use(express.static('dist'));
+server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.json());
 /*
  * Handle the proxy request.
  */
 function handleContentRequest(req, res, authValue) {
-  // only proxy GET requests, ignore all other requests
-  if (req.method !== 'GET') {
-    return;
-  }
-
   // build the URL to the real server
   let content = process.env.SERVER_URL.charAt(process.env.SERVER_URL.length - 1) === '/'
     ? 'content' : '/content';
@@ -53,6 +57,7 @@ function handleContentRequest(req, res, authValue) {
   if (authValue) {
     options.headers = { Authorization: authValue };
   }
+  options.method = req.method;
 
   // define a function that writes the proxied content to the response
   const writeProxyContent = (proxyResponse) => {
@@ -61,11 +66,17 @@ function handleContentRequest(req, res, authValue) {
       end: true,
     });
   };
-
   // based on whether the Content server is HTTP or HTTPS make the request to it
   const proxy = (oceUrl.startsWith('https'))
     ? https.request(oceUrl, options, (proxyResponse) => writeProxyContent(proxyResponse))
     : http.request(oceUrl, options, (proxyResponse) => writeProxyContent(proxyResponse));
+  if (req.method === 'POST') {
+    proxy.write(JSON.stringify(req.body));
+  }
+  // Handling error event
+  proxy.on('error', (err) => {
+    console.log('Error in server.js while executing proxy request : ', err);
+  });
 
   // write the proxied response to this request's response
 
@@ -89,40 +100,42 @@ function handleContentRequest(req, res, authValue) {
  * - 'src/scripts/server-config-utils.getClient' for the code proxying requests for content
  */
 server.use('/content/', (req, res) => {
-  handleContentRequest(req, res, '');
+  const client = getClient();
+  client.getAuthorizationHeaderValue().then((authValue) => {
+    handleContentRequest(req, res, authValue);
+  });
 });
 
 /*
  * Create a single route handler to listen to all (*) routes of our application
  */
 server.get('*', (req, res) => {
-  // matchRoutes will return all the components which will be rendered as per the request route.
-  // call "fetchInitialData" on each of those components (if the component has such a method),
+  // matchPath will return the component which will be rendered as per the request route.
+  // call "fetchInitialData" on that component (if the component has such a method),
   // and build up an array of pending network calls for all the data required for the components
   // which will be rendered.
-  const promises = matchRoutes(Routes, req.path).map(({ route }) => (
-    route.fetchInitialData ? route.fetchInitialData(req) : null));
-
-  // Execute all promises at the same time to get all the data, once its all been obtained
-  // render the HTML to the client by delgating to the "renderer" method
-  Promise.all(promises).then((data) => {
-    // this context object gets passed into the renderer, which in turn passes it
-    // to the StaticRouter. The StaticRouter passes it to any component which is called
-    // as the "staticContext" prop.
-    const context = { data };
-
-    // get the content to return to the client
-    const content = renderer(req, context);
-
-    // if the route requested was not found, the content object will have its "notFound"
-    // property set, therefore we need to change the response code to a 404, not found
-    if (context.notFound) {
-      res.status(404);
+  const promises = [];
+  const activeRoute = routes.find((route) => matchPath(route.path, req.url)) || null;
+  if (activeRoute && activeRoute.fetchInitialData) {
+    const hostUrl = `${req.protocol}://${req.headers.host}`;
+    if (req.url !== '/') {
+      promises.push(fetchOceMinimalMain());
     }
-    if (context.url) {
-      // If a redirect was set using a Redirect component do that
-      res.redirect(301, context.url);
+    promises.push(activeRoute.fetchInitialData(req.path, hostUrl));
+  }
+  // Execute all promises at the same time to get all the data, once its all been obtained
+  // render the HTML to the client by delegating to the "renderer" method
+  Promise.all(promises).then((data) => {
+    if (req.url === '/') {
+      const { fields } = data[0];
+      const [firstPage] = fields.pages;
+      const firstPageSlug = firstPage.slug;
+      const url = `/page/${firstPageSlug}`;
+      res.redirect(301, url);
     } else {
+      // this data object gets passed into the renderer which then
+      // returns the content to send back to the client
+      const content = renderer(req, data);
       // send the response
       res.send(content);
     }

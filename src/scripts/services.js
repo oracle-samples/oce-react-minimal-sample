@@ -10,6 +10,7 @@
  */
 
 import getClient from './server-config-utils';
+import getImageUrl from './utils';
 
 /**
  * Utility method to log an error.
@@ -44,7 +45,7 @@ function addRendition(urls, rendition, formatstr) {
   // Get the webp format field
   const format = rendition.formats.filter((item) => item.format === `${formatstr}`)[0];
   const self = format.links.filter((item) => item.rel === 'self')[0];
-  const url = self.href;
+  const url = getImageUrl(self.href);
   const { width } = format.metadata;
 
   // Also save the jpg format so that it can be used as a default value for images

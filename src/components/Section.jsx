@@ -65,8 +65,9 @@ const Section = ({ section }) => {
           </div>
           {actions && (
             <div>
-              {actions.map((action) => (
-                <a className="button" href={action.link}>
+              {actions.map((action, index) => (
+                // eslint-disable-next-line react/no-array-index-key
+                <a className="button" href={action.link} key={index}>
                   {action.name}
                 </a>
               ))}

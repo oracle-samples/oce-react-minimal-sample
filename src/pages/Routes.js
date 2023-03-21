@@ -6,27 +6,31 @@
 /**
  * Contains the Routes used in the Client and Server routers.
  */
-import App from './App';
 import Page from './Page';
 import People from './People';
+// eslint-disable-next-line import/no-cycle
+import App from './App';
+import { fetchOceMinimalMain, fetchPage } from '../scripts/services';
+import fetchPeople from '../scripts/services-graphql';
 
-export default [
+const routes = [
   {
-    ...App,
     path: '/',
-    routes: [
-      {
-        ...People,
-        path: '/page/people',
-        exact: true,
-        title: 'People',
-      },
-      {
-        ...Page,
-        path: '/page/:slug',
-        exact: true,
-        title: 'Page',
-      },
-    ],
+    component: App,
+    fetchInitialData: () => fetchOceMinimalMain(),
+  },
+  {
+    path: '/page/people',
+    component: People,
+    fetchInitialData: (path, hostUrl) => fetchPeople('people', hostUrl), // hostUrl gets passed only on serverside
+    title: 'People',
+  },
+  {
+    path: '/page/:slug',
+    component: Page,
+    fetchInitialData: (path) => fetchPage(path.split('/').pop()),
+    title: 'Page',
   },
 ];
+
+export default routes;
