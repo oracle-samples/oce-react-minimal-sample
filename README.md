@@ -4,7 +4,7 @@ This repository holds the sample source code for a ReactJS implementation of a s
 
 Please see the [complete tutorial](https://www.oracle.com/pls/topic/lookup?ctx=cloud&id=oce-react-minimal-sample) and [live demo](https://headless.mycontentdemo.com/samples/oce-react-minimal-sample).
 
-## Running the project
+## How to run
 
 > **NOTE:** If you need to use a proxy to reach the internet then define an `oce_https_proxy` environment variable:
 
@@ -60,7 +60,7 @@ vulnerability disclosure process.
 
 ## License
 
-Copyright (c) 2021, 2022, Oracle and/or its affiliates.
+Copyright (c) 2021, 2023 Oracle and/or its affiliates.
 
 Released under the Universal Permissive License v1.0 as shown at
 <https://oss.oracle.com/licenses/upl/>.
